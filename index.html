@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>learning VUE</title>
+    <script src="https://unpkg.com/vue@3.0.2"></script>
+</head>
+<body>
+    <h1>Web Dev With VuE</h1>
+    <div id="app">
+        <div v-if="showBooks">
+            <h2> {{ title }} - {{ author }} - {{ age }} </h2>
+        </div>
+
+        <button @click="toggleShowBooks">
+            <span v-if="showBooks">
+                Hide Books
+            </span>
+            <span v-else>
+                Show Books
+            </span>
+        </button>
+        <div v-if="showBooks">
+            <span>
+                <button v-on:click="age++">Increase Age</button>
+            </span>
+            <span>
+                <button @click="age--">Decrease age</button>
+            </span>
+            
+            
+            <div @click="changeTitle('Oathbreaker')">Click here to change title</div>
+        </div>
+        
+        
+    </div>
+
+    <p>not control</p>
+
+    <script src="app.js"> </script>
+</body>
+</html>
