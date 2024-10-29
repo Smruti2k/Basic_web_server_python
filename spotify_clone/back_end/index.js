@@ -3,11 +3,34 @@
 
 //we now use express
 
-const express =require("express")// this exports as a function 
+const express =require("express");// this exports as a function 
+const mongoose = require("mongoose");
 const app = express();
+require("dotenv").config();
 const port=3001;
 
+
 //the above code helps to import all the expres code to local
+
+//now this code will help to connect our node app to mongodb
+
+//VVIMP the passwrod for mongoDB should not contain any special Charecter or else the mongoose can not bypass that
+
+mongoose.connect("mongodb+srv://smrutimallick979:" + process.env.MONGO_PASSWORD +"@cluster0.1jtmd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }
+)
+.then((x)=>{
+    console.log("connected to Mongo");
+    
+})
+.catch((err) =>
+{
+    console.log("Error while connecting to mongo",err.message);
+    
+});
 
 //API :GET type where / we return hello world
 app.get("/",(req,res) => {
@@ -24,6 +47,3 @@ app.listen(port, ()=>
     {
         console.log("App is running on port  "+ port );
     });
-
-
-
