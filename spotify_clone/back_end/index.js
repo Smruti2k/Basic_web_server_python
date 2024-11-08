@@ -5,11 +5,16 @@
 
 const express =require("express");// this exports as a function 
 const mongoose = require("mongoose");
+const JwtStrategy = require('passport-jwt').Strategy,
+ExtractJwt = require('passport-jwt').ExtractJwt;
+const authRoutes = require("./routes/auth");
+const passport=require("passport");
+const User= require("./models/user_model/user");
 const app = express();
 require("dotenv").config();
 const port=3001;
 
-
+app.use(express.json());
 //the above code helps to import all the expres code to local
 
 //now this code will help to connect our node app to mongodb
@@ -32,6 +37,27 @@ mongoose.connect("mongodb+srv://smrutimallick979:" + process.env.MONGO_PASSWORD 
     
 });
 
+//setup passport jwt
+
+
+let opts = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = process.env.SECRETKEY;
+passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+    User.findOne({id: jwt_payload.sub}, function(err, user) {
+        //done (error,doesTheUserExist)
+        if (err) {
+            return done(err, false);
+        }
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+            // or you could create a new account
+        }
+    });
+}));
+
 //API :GET type where / we return hello world
 app.get("/",(req,res) => {
     //re contains all data for furthur request
@@ -40,6 +66,7 @@ app.get("/",(req,res) => {
     res.send("Hello World");
 
 });
+app.use("/auth", authRoutes );
 
 //now we want to tell express that server will run on a specific port
 
