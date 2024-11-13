@@ -8,7 +8,10 @@ const mongoose = require("mongoose");
 const JwtStrategy = require('passport-jwt').Strategy,
 ExtractJwt = require('passport-jwt').ExtractJwt;
 const authRoutes = require("./routes/auth");
+<<<<<<< HEAD
 const songRoutes = require("./routes/song")
+=======
+>>>>>>> bb2442d74e5e5fa2e7db85224edf23b4ea0dea74
 const passport=require("passport");
 const User= require("./models/user_model/user");
 const app = express();
@@ -68,7 +71,10 @@ app.get("/",(req,res) => {
 
 });
 app.use("/auth", authRoutes );
+<<<<<<< HEAD
 app.use("/song", songRoutes);
+=======
+>>>>>>> bb2442d74e5e5fa2e7db85224edf23b4ea0dea74
 
 //now we want to tell express that server will run on a specific port
 
