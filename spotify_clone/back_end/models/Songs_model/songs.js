@@ -26,6 +26,6 @@ const Songs = new mongoose.Schema({
     } 
 });
 
-const songsModel =mongoose.model("Songs",songs);//name of DB in first argument and name of schema in second argument
+const songsModel =mongoose.model("Songs",Songs);//name of DB in first argument and name of schema in second argument
 
 module.exports = songsModel;
