@@ -44,35 +44,31 @@ router.post("/register", async (req,res) =>{
 
 //this will implement the login function
 
-router.post("/login" , async(req,res) =>{
-
-    //step 1
-    //get email and password from req.body
-
-    //step2 if the email is okay or else wrong email
-
-    //step3 check if password is correct if not invalid password
-
-    //step 4 logiin if creds are correct and send a toke to user
-
+router.post("/login", async (req, res) => {
+    // Step 1: Get email and password sent by user from req.body
     const {email, password} = req.body;
 
-
+    // Step 2: Check if a user with the given email exists. If not, the credentials are invalid.
     const user = await User.findOne({email: email});
-    if(!user)
-    {
-        return res.status(403).json({err: "Invalid Credentials"});
-
+    if (!user) {
+        return res.status(403).json({err: "Invalid credentials"});
     }
 
-    const isPasswordValue = await bcrypt.compare(password,user.password);
-    if(!isPasswordValue)
-    {
-        res.status(403).json({err:"Inavild credentials"});
+    console.log(user);
+
+    // Step 3: If the user exists, check if the password is correct. If not, the credentials are invalid.
+    // This is a tricky step. Why? Because we have stored the original password in a hashed form, which we cannot use to get back the password.
+    // I cannot do : if(password === user.password)
+    // bcrypt.compare enabled us to compare 1 password in plaintext(password from req.body) to a hashed password(the one in our db) securely.
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // This will be true or false.
+    if (!isPasswordValid) {
+        return res.status(403).json({err: "Invalid credentials"});
     }
 
-    const token = await getToken (user.email , user);
-    const userToReturn = {...user.toJSON(),token};
+    // Step 4: If the credentials are correct, return a token to the user.
+    const token = await getToken(user.email, user);
+    const userToReturn = {...user.toJSON(), token};
     delete userToReturn.password;
     return res.status(200).json(userToReturn);
 });

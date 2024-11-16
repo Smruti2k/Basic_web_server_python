@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-//3 step
-//require mongoose
-//create a mongoose schemaof user
-//create a model
+const user = require("../user_model/user");
+
 
 const Songs = new mongoose.Schema({
     name:{
@@ -22,10 +20,10 @@ const Songs = new mongoose.Schema({
     artist:
     {
         type: mongoose.Types.ObjectId, //search the user ID of the Artist as the type is objectID after its created 
-        ref: "user",//from the file it would take reference from is user do GET
+        ref: "User",//from the file it would take reference from is user do GET
     } 
 });
 
-const songsModel =mongoose.model("Songs",Songs);//name of DB in first argument and name of schema in second argument
+const songsModel = mongoose.model("Songs",Songs);//name of DB in first argument and name of schema in second argument
 
 module.exports = songsModel;

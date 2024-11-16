@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const user=require("../user_model/user");
+const songs = require("../Songs_model/songs");
 //3 step
 //require mongoose
 //create a mongoose schemaof user
@@ -17,7 +19,7 @@ const playlist = new mongoose.Schema({
     owner:
     {
         type: mongoose.Types.ObjectId, //search the user ID of the Artist as the type is objectID after its created 
-        ref: "user",//from the file it would take reference from is user do GET
+        ref: "User",//from the file it would take reference from is user do GET
     },
     //1.all the songs in playlist
     //2.playlist collaboraters
@@ -25,7 +27,7 @@ const playlist = new mongoose.Schema({
     [
         {
             type: mongoose.Types.ObjectId,
-            ref: "songs",
+            ref: "Songs",
 
         }
     ],
@@ -33,7 +35,7 @@ const playlist = new mongoose.Schema({
     [
         {
             type: mongoose.Types.ObjectId,
-            ref: "user"
+            ref: "User",
         }
     ],
 });

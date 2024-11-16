@@ -41,6 +41,6 @@ const User = new mongoose.Schema({
     }
 });
 
-const userModel =mongoose.model("User",User);//name of DB in first argument and name of schema in second argument
+const userModel = mongoose.model("User",User);//name of DB in first argument and name of schema in second argument
 
 module.exports = userModel;

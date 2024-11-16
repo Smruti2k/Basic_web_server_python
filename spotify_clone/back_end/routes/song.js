@@ -1,61 +1,74 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");                                    
+const passport = require("passport");
 const Song = require("../models/Songs_model/songs");
+const User = require("../models/user_model/user");
 
-//this function allows users to publish there own song
-//this is a middleware basically something that we want to check before the req and res gets called function - passport.authenticate jwt is the default name 
-router.post("/create",passport.authenticate("jwt", {session: false}), async (req,res)=>{
-    //req.user gets populated because of passport.authenticate
-    const{name, thumbnail, track} = req.body;
-    if( !name || !thumbnail || !track)
-    {
-        return res
-            .status(301)
-            .json({err: "Insufficient Details to create song"});
+router.post(
+    "/create",
+    passport.authenticate("jwt", {session: false}),
+    async (req, res) => {
+        // req.user getss the user because of passport.authenticate
+        const {name, thumbnail, track} = req.body;
+        if (!name || !thumbnail || !track) {
+            return res
+                .status(301)
+                .json({err: "Insufficient details to create song."});
+        }
+        const artist = req.user._id;
+        const songDetails = {name, thumbnail, track, artist};
+        const createdSong = await Song.create(songDetails);
+        return res.status(200).json(createdSong);
     }
-    const artist = req.user._id;//this gets populated beacuse of the authentication token id
-    const songDetails = {name, thumbnail, track, artist};
-    const createdSong = await Song.create(songDetails);
-    return res.status(200).json(createdSong);
+);
 
-} );
+// Get route to get all songs I have published.
+router.get(
+    "/get/mysongs",
+    passport.authenticate("jwt", {session: false}),
+    async (req, res) => {
+        // We need to get all songs where artist id == currentUser._id
+        const songs = await Song.find({artist: req.user._id}).populate(
+            "artist"
+        );
+        return res.status(200).json({data: songs});
+    }
+);
 
-//if someone is getting this error :
-//  MongooseError: Model.findOne() no longer accepts a callback
-
-//  Then go to your package.json file, and in there chenge it to 
-//  "dependencies": {
-//    "mongoose": "^5.13.20",
-//    // other dependencies...
-//  }
- 
-//  After that run : npm install  
-//  in your terminal, after running it check the downgraded mongoose version by: npm list mongoose 
-//  see if has downgraded to 5.X.X from your previous version
-//  This will solve the problem...
-
-//this next function will get all the songs published by me
-
-router.get("/get/mysongs", passport.authenticate("jwt", { session: false }), async (req, res) => {
-    try {
-        const currentUser = req.user;
-
-        // Make sure the user is authenticated and has an _id
-        if (!currentUser || !currentUser._id) {
-            return res.status(401).json({ err: "User not authenticated or missing ID" });
+// Get route to get all songs any artist has published
+// I will send the artist id and I want to see all songs that artist has published.
+router.get(
+    "/get/artist/:artistId",
+    passport.authenticate("jwt", {session: false}),
+    async (req, res) => {
+        const {artistId} = req.params;
+        // We can check if the artist does not exist
+        const artist = await User.findOne({_id: artistId});
+        //find one finds only one and if it does not finds then it returns null
+        // ![] = false
+        // !null = true
+        // !undefined = true
+        if (!artist) {
+            return res.status(301).json({err: "Artist does not exist"});
         }
 
-        // Get all songs for the current user
-        const songs = await Song.find({ artist: currentUser._id });
-
-        return res.status(200).json({ data: songs }); 
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Server error" });
+        const songs = await Song.find({artist: artistId});
+        return res.status(200).json({data: songs});
     }
-});
+);
 
+// Get route to get a single song by name
+router.get(
+    "/get/songname/:songName",
+    passport.authenticate("jwt", {session: false}),
+    async (req, res) => {
+        const {songName} = req.params;//either you write it as const {songName}= req.params or write it as songName = req.params.songName
 
-module.exports = router
+        // name:songName --> exact name matching. Vanilla, Vanila
+        // Pattern matching instead of direct name matching.
+        const songs = await Song.find({name: songName});
+        return res.status(200).json({data: songs});
+    }
+);
 
+module.exports = router;
