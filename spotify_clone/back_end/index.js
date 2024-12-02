@@ -13,9 +13,12 @@ const passport=require("passport");
 const User= require("./models/user_model/user");
 const playlistRoutes = require("./routes/playlist");
 const app = express();
+const cors = require("cors");
 require("dotenv").config();
 const port=3001;
 
+
+app.use(cors());
 app.use(express.json());
 //the above code helps to import all the expres code to local
 
