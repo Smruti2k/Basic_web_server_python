@@ -19,6 +19,7 @@ const SignUpComponent = () => {
   const [lastName, setLastName] = useState("");
   const [cookie, setCookie] = useCookies(["token"]);
   const nagivate = useNavigate ();
+  
   //below code is used for debugging and not required actually its used for checking if the values are reflected in console or not
   // useEffect(() => {
   //   console.log("Email updated:", email);
@@ -26,11 +27,11 @@ const SignUpComponent = () => {
 
   //this is the function thats called upon when you hit signUp in the signup page it collects the data required in the format needed by the  API in backend
 
-  const signUp = async () => {
+ const signUp = async () => {
     if (email !== confirmEmail) {
       alert("Email and its Confirmation Must match !! Please Check Again");
       return;
-    }
+    } 
 
     const data = { email, password, username, firstName, lastName };
     console.log(data);
