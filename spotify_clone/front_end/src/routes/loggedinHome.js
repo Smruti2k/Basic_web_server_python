@@ -1,6 +1,7 @@
 import Spotify_logo from "../assets/images/spotify_logo_white.svg";
 import IconText from "../componenets/shared/iconText";
 import TextWithHover from "../componenets/shared/TextWithHover";
+import { useNavigate } from "react-router-dom";
 
 const RecentsCardsData = [
   {
@@ -94,7 +95,10 @@ const ChartsCardsData = [
 ];
 
 const home = () => {
+  const Navigate = useNavigate();
   return (
+    
+
     <div className="h-full w-full flex ">
       {/* this is the left pannel of the spotify home page */}
       <div className="h-full w-1/5 bg-black flex flex-col justify-between py-8">
