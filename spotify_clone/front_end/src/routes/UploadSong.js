@@ -3,10 +3,32 @@ import CloudinaryUpload from "../componenets/shared/CloudinaryUpload";
 import IconText from "../componenets/shared/iconText";
 import TextInput from "../componenets/shared/textInput";
 import TextWithHover from "../componenets/shared/TextWithHover";
+import { useState } from "react";
+import {makeAuthenticatedPOSTRequest} from "../utils/serverHelper"
+import { useNavigate } from "react-router-dom";
 
 const UploadSong = () => {
-    console.log(window)
-    console.log(window.cloudinary);
+  const [name, setName] = useState("");
+  const [thumbnail, setThumbnail] = useState("");
+  const [playlistUrl, setPlayListUrl] = useState("");
+  const [uploadedSongFileName, setUploadedSongFilename] = useState("");
+  const navigate = useNavigate();
+
+  const SubmitSong = async() => {
+    const data = {name,thumbnail,track:playlistUrl}
+    const response = await makeAuthenticatedPOSTRequest(
+      "/song/create",
+      data
+    );
+    if(response.err){
+      alert("Could not create song")
+      return;
+    }
+    alert("Sucess");
+    navigate("/home");
+
+  }
+
   return (
     <div className="h-full w-full flex ">
       {/* this is the left pannel of the spotify home page */}
@@ -96,6 +118,8 @@ const UploadSong = () => {
                 label="Name"
                 labelClassName={"text-white"}
                 placeHolder={"Name"}
+                value={name}
+                setValue={setName}
               />
             </div>
             <div className="w-1/2">
@@ -103,13 +127,26 @@ const UploadSong = () => {
                 label="Thumbnail"
                 labelClassName={"text-white"}
                 placeHolder={"Thumbnail"}
+                value={thumbnail}
+                setValue={setThumbnail}
               />
             </div>
           </div>
-            <div className="pt-5">
-                <CloudinaryUpload />
+          <div className="py-5" >
+            {uploadedSongFileName ? (
+              <div className="bg-white text-black rounded-full p-2 w-1/3 ">
+                {uploadedSongFileName.substring(0,30)}...
+              </div>
+            ) : (
+              <CloudinaryUpload
+                setUrl={setPlayListUrl}
+                setName={setUploadedSongFilename}
+              />
+            )}
+          </div>
+          <div className="bg-white w-40 flex items-center justify-center p-3 rounded-full cursor-pointer font-semibold" onClick={SubmitSong}>
+            Submit Song
             </div>
-          <div />
         </div>
       </div>
     </div>

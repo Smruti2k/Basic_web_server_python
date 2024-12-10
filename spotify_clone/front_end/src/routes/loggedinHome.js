@@ -94,7 +94,7 @@ const ChartsCardsData = [
   },
 ];
 
-const home = () => {
+const Home = () => {
   const Navigate = useNavigate();
   return (
     
@@ -234,4 +234,4 @@ const Card = ({ title, description, imgUrl }) => {
   );
 };
 
-export default home;
+export default Home;
