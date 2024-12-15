@@ -8,12 +8,12 @@ import LogedInHomeComponent from "./routes/loggedinHome";
 import { useCookies } from "react-cookie";
 import UploadSong from "./routes/UploadSong";
 import songContext from "./contexts/songContext";
-import  { useState } from "react";
+import { useState } from "react";
 
 function App() {
-  const [currentSong , setCurrentSong] = useState(null);
+  const [currentSong, setCurrentSong] = useState(null);
   const [cookie, setCookies] = useCookies(["token"]);
-  
+
   console.log(cookie.token);
   return (
     <div className="w-screen h-screen font-poppins">
@@ -21,19 +21,19 @@ function App() {
       <BrowserRouter>
         {/* these are the routes which works only if i am loggin in */}
         {cookie.token ? (
-          <Routes>
-            {/* adding routes componets here indicates the package that we are starting to define our routes inside it */}
-            {/* logged in routes */}
-            <Route path="/" element={<HelloComponent />}>
-              {" "}
-            </Route>
-            <songContext.Provider value={{currentSong,setCurrentSong}}>
+          <songContext.Provider value={{ currentSong, setCurrentSong }}>
+            <Routes>
+              {/* adding routes componets here indicates the package that we are starting to define our routes inside it */}
+              {/* logged in routes */}
+              <Route path="/" element={<HelloComponent />}>
+                {" "}
+              </Route>
               <Route path="/home" element={<LogedInHomeComponent />}></Route>
               <Route path="/uploadSong" element={<UploadSong />}></Route>
               <Route path="/myMusic" element={<MyMusic />}></Route>
               <Route path="*" element={<Navigate to="/home" />}></Route>
-            </songContext.Provider>
-          </Routes>
+            </Routes>
+          </songContext.Provider>
         ) : (
           // these are the routes which works if you are logged out so that anyone who knows the routs could not access the webpages
           <Routes>
