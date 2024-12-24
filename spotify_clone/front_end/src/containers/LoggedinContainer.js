@@ -2,27 +2,46 @@ import Spotify_logo from "../assets/images/spotify_logo_white.svg";
 import IconText from "../componenets/shared/iconText";
 import TextWithHover from "../componenets/shared/TextWithHover";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Howl, Howler } from "howler";
 import { Icon } from "@iconify/react";
+import songContext from "../contexts/songContext";
 
-
-
-
-
-
-const LoggedInContainer = ({children}) => {
+const LoggedInContainer = ({ children }) => {
   const Navigate = useNavigate();
   const [soundPlayed, setSoundPlayed] = useState(null);
   const [isPaused, setIsPaused] = useState(true);
 
-  const playSound = (songSrc) => {
+  const { currentSong, setCurrentSong } = useContext(songContext);
+
+  useEffect(() => {
+    if(!currentSong)
+    {
+      return;
+    }
+
+    changeSong(currentSong.track)
+  }, [currentSong])
+  // console.log(currentSong);
+
+  const playSound = () =>{
+    if(!soundPlayed)
+    {
+      return;
+    }
+    soundPlayed.play();
+  }
+
+
+
+  const changeSong = (songSrc) => {
     if (soundPlayed) {
       soundPlayed.stop();
     }
     let sound = new Howl({ src: [songSrc], html5: true });
     setSoundPlayed(sound);
     sound.play();
+    setIsPaused(false);
     // console.log(sound);
   };
 
@@ -32,9 +51,7 @@ const LoggedInContainer = ({children}) => {
 
   const tooglePlayPause = () => {
     if (isPaused) {
-      playSound(
-        "https://res.cloudinary.com/dwcccsf2j/video/upload/v1734201011/ykv4scrioiqnvasd60x8.mp3"
-      );
+      playSound(currentSong.track);
       setIsPaused(false);
     } else {
       pauseSound();
@@ -44,7 +61,7 @@ const LoggedInContainer = ({children}) => {
 
   return (
     <div className="h-full w-full bg-app-black">
-      <div className="h-9/10 w-full flex">
+      <div className={`${currentSong ? "h-9/10" : "h-full"} w-full flex`}>
         {/* this is the left pannel of the spotify home page */}
         <div className="h-full w-1/5 bg-black flex flex-col justify-between py-8">
           <div>
@@ -54,7 +71,7 @@ const LoggedInContainer = ({children}) => {
             </div>
             <div className="pt-1">
               <div className="m-1 cursor-pointer">
-                <IconText iconName={"jam:home-f"} displayText={"Home"} active />
+                <IconText iconName={"jam:home-f"} displayText={"Home"} targetLink={"/home"} />
               </div>
               <div className="m-1 cursor-pointer">
                 <IconText iconName={"mynaui:search"} displayText={"Search"} />
@@ -69,6 +86,7 @@ const LoggedInContainer = ({children}) => {
                 <IconText
                   iconName={"mynaui:music-solid"}
                   displayText={"My Music"}
+                  targetLink="/myMusic"
                 />
               </div>
             </div>
@@ -122,68 +140,71 @@ const LoggedInContainer = ({children}) => {
               </div>
             </div>
           </div>
-          <div className="Content p-8 pt-0 ">
-            {children}
-          </div>
+          <div className="Content p-8 pt-0 ">{children}</div>
         </div>
       </div>
       {/* this div is the current playing song */}
-      <div className="w-full h-1/10 bg-black bg-opacity-30 text-white flex items-center px-4">
-        <div className="w-1/4 flex items-center">
-          <img
-            src="https://pagalnew.com/coverimages/Bhool-Bhulaiyaa-Pritam-500-500.jpg"
-            alt=" Thumbnail of Bhool Bhuleiya"
-            className="h-14 w-14 rounded "
-          ></img>
-          <div className="pl-4">
-            <div className="text-sm hover:underline cursor-pointer">
-              Bhool Bhuleiya
-            </div>
-            <div className="text-xs text-gray-500 hover:underline cursor-pointer">
-              K.K
+      {currentSong && (
+        <div className="w-full h-1/10 bg-black bg-opacity-30 text-white flex items-center px-4">
+          <div className="w-1/4 flex items-center">
+            <img
+              src={currentSong.thumbnail}
+              alt="currentSong thumbnail"
+              className="h-14 w-14 rounded "
+            ></img>
+            <div className="pl-4">
+              <div className="text-sm hover:underline cursor-pointer">
+                {currentSong.name}
+              </div>
+              <div className="text-xs text-gray-500 hover:underline cursor-pointer">
+                {currentSong.artist.firstName +
+                  " " +
+                  currentSong.artist.lastName}
+              </div>
             </div>
           </div>
-        </div>
-        <div className="w-1/2 flex justify-center h-full flex-col items-center">
-          <div className="flex w-1/3 justify-between items-center">
-            {/* control */}
-            <Icon
-              icon="iconamoon:playlist-shuffle-light"
-              fontSize={30}
-              className="cursor-pointer text-gray-500  hover:text-white"
-            />
-            <Icon
-              icon="mage:previous-fill"
-              fontSize={30}
-              className="cursor-pointer text-gray-500 hover:text-white"
-            />
-            <Icon
-              icon={isPaused ? "heroicons-solid:play" : "heroicons-solid:pause"}
-              fontSize={50}
-              className="cursor-pointer text-gray-500 hover:text-white"
-              onClick={tooglePlayPause}
-            />
-            <Icon
-              icon="mage:next-fill"
-              fontSize={30}
-              className="cursor-pointer text-gray-500 hover:text-white"
-            />
-            <Icon
-              icon="mi:repeat"
-              fontSize={30}
-              className="cursor-pointer text-gray-500 hover:text-white"
-            />
+          <div className="w-1/2 flex justify-center h-full flex-col items-center">
+            <div className="flex w-1/3 justify-between items-center">
+              {/* control */}
+              <Icon
+                icon="iconamoon:playlist-shuffle-light"
+                fontSize={30}
+                className="cursor-pointer text-gray-500  hover:text-white"
+              />
+              <Icon
+                icon="mage:previous-fill"
+                fontSize={30}
+                className="cursor-pointer text-gray-500 hover:text-white"
+              />
+              <Icon
+                icon={
+                  isPaused ? "heroicons-solid:play" : "heroicons-solid:pause"
+                }
+                fontSize={50}
+                className="cursor-pointer text-gray-500 hover:text-white"
+                onClick={tooglePlayPause}
+              />
+              <Icon
+                icon="mage:next-fill"
+                fontSize={30}
+                className="cursor-pointer text-gray-500 hover:text-white"
+              />
+              <Icon
+                icon="mi:repeat"
+                fontSize={30}
+                className="cursor-pointer text-gray-500 hover:text-white"
+              />
+            </div>
+            <div>{/* //play bar */}</div>
           </div>
-          <div>{/* //play bar */}</div>
+          <div className="w-1/4 flex justify-end">Hello</div>
         </div>
-        <div className="w-1/4 flex justify-end">Hello</div>
-      </div>
+      )}
     </div>
   );
 };
 
 // this is a component but in home only as there is no need for it to be shared
 //now this component means this playlist is called multiple times thus we are converting it to a call prop calling titleText and cardsData
-
 
 export default LoggedInContainer;
