@@ -92,6 +92,7 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
                   iconName={"mynaui:search"}
                   displayText={"Search"}
                   active={curActiveScreen === "search"}
+                  targetLink={"/search"}
                 />
               </div>
               <div className="m-1 cursor-pointer">
