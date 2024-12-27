@@ -13,6 +13,8 @@ import { useState } from "react";
 function App() {
   const [currentSong, setCurrentSong] = useState(null);
   const [cookie, setCookies] = useCookies(["token"]);
+  const [soundPlayed, setSoundPlayed] = useState(null);
+  const [isPaused, setIsPaused] = useState(true);
 
   console.log(cookie.token);
   return (
@@ -21,7 +23,16 @@ function App() {
       <BrowserRouter>
         {/* these are the routes which works only if i am loggin in */}
         {cookie.token ? (
-          <songContext.Provider value={{ currentSong, setCurrentSong }}>
+          <songContext.Provider
+            value={{
+              currentSong,
+              setCurrentSong,
+              soundPlayed,
+              setSoundPlayed,
+              isPaused,
+              setIsPaused,
+            }}
+          >
             <Routes>
               {/* adding routes componets here indicates the package that we are starting to define our routes inside it */}
               {/* logged in routes */}

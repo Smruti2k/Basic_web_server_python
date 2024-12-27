@@ -16,6 +16,7 @@ const UploadSong = () => {
 
   const SubmitSong = async() => {
     const data = {name,thumbnail,track:playlistUrl}
+    console.log(data);
     const response = await makeAuthenticatedPOSTRequest(
       "/song/create",
       data

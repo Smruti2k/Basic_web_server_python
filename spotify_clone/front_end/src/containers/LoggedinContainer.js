@@ -2,37 +2,46 @@ import Spotify_logo from "../assets/images/spotify_logo_white.svg";
 import IconText from "../componenets/shared/iconText";
 import TextWithHover from "../componenets/shared/TextWithHover";
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useLayoutEffect, useState, useRef } from "react";
 import { Howl, Howler } from "howler";
 import { Icon } from "@iconify/react";
 import songContext from "../contexts/songContext";
 
-const LoggedInContainer = ({ children }) => {
+const LoggedInContainer = ({ children, curActiveScreen }) => {
   const Navigate = useNavigate();
-  const [soundPlayed, setSoundPlayed] = useState(null);
-  const [isPaused, setIsPaused] = useState(true);
 
-  const { currentSong, setCurrentSong } = useContext(songContext);
+  const {
+    currentSong,
+    setCurrentSong,
+    soundPlayed,
+    setSoundPlayed,
+    isPaused,
+    setIsPaused,
+  } = useContext(songContext);
 
-  useEffect(() => {
-    if(!currentSong)
-    {
+  const firstUpdate = useRef(true);
+
+  useLayoutEffect(() => {
+    //the following if staement will prevent use effect in the first render
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
       return;
     }
 
-    changeSong(currentSong.track)
-  }, [currentSong])
+    if (!currentSong) {
+      return;
+    }
+
+    changeSong(currentSong.track);
+  }, [currentSong && currentSong.track]);
   // console.log(currentSong);
 
-  const playSound = () =>{
-    if(!soundPlayed)
-    {
+  const playSound = () => {
+    if (!soundPlayed) {
       return;
     }
     soundPlayed.play();
-  }
-
-
+  };
 
   const changeSong = (songSrc) => {
     if (soundPlayed) {
@@ -71,15 +80,25 @@ const LoggedInContainer = ({ children }) => {
             </div>
             <div className="pt-1">
               <div className="m-1 cursor-pointer">
-                <IconText iconName={"jam:home-f"} displayText={"Home"} targetLink={"/home"} />
+                <IconText
+                  iconName={"jam:home-f"}
+                  displayText={"Home"}
+                  targetLink={"/home"}
+                  active={curActiveScreen === "home"}
+                />
               </div>
               <div className="m-1 cursor-pointer">
-                <IconText iconName={"mynaui:search"} displayText={"Search"} />
+                <IconText
+                  iconName={"mynaui:search"}
+                  displayText={"Search"}
+                  active={curActiveScreen === "search"}
+                />
               </div>
               <div className="m-1 cursor-pointer">
                 <IconText
                   iconName={"fluent:library-28-filled"}
                   displayText={"Your Library"}
+                  active={curActiveScreen === "library"}
                 />
               </div>
               <div className="m-1 cursor-pointer">
@@ -87,6 +106,7 @@ const LoggedInContainer = ({ children }) => {
                   iconName={"mynaui:music-solid"}
                   displayText={"My Music"}
                   targetLink="/myMusic"
+                  active={curActiveScreen === "myMusic"}
                 />
               </div>
             </div>

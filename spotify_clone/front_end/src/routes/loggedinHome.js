@@ -95,7 +95,7 @@ const ChartsCardsData = [
 const Home = () => {
   return(
 
-    <LoggedInContainer>
+    <LoggedInContainer curActiveScreen={"home"}>
     <PlayListView titleText={"Recents"} cardsData={RecentsCardsData} />
     <PlayListView
       titleText={"Popular Radios"}
