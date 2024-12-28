@@ -1,10 +1,10 @@
 import { Icon } from "@iconify/react";
 import { Link } from "react-router-dom";
 
-const IconText = ({ iconName, displayText, active ,targetLink}) => {
+const IconText = ({ iconName, displayText, active, targetLink, onPress }) => {
   return (
-    <Link to={targetLink} className = "block">
-      <div className="flex justify-start items-center">
+    <Link to={targetLink} className="block">
+      <div className="flex justify-start items-center" onClick={onPress}>
         <div className="px-6 py-2.5">
           <Icon
             icon={iconName}

@@ -6,9 +6,11 @@ import { useContext, useLayoutEffect, useState, useRef } from "react";
 import { Howl, Howler } from "howler";
 import { Icon } from "@iconify/react";
 import songContext from "../contexts/songContext";
+import CreateModalPlaylist from "../modals/createPlaylistFile";
 
 const LoggedInContainer = ({ children, curActiveScreen }) => {
   const Navigate = useNavigate();
+  const [createPlaylistModalOpen, setCreatePlaylistModalOpen] = useState(false);
 
   const {
     currentSong,
@@ -70,6 +72,13 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
 
   return (
     <div className="h-full w-full bg-app-black">
+      {createPlaylistModalOpen && (
+        <CreateModalPlaylist
+          closeModal={() => {
+            setCreatePlaylistModalOpen(false);
+          }}
+        />
+      )}
       <div className={`${currentSong ? "h-9/10" : "h-full"} w-full flex`}>
         {/* this is the left pannel of the spotify home page */}
         <div className="h-full w-1/5 bg-black flex flex-col justify-between py-8">
@@ -117,6 +126,9 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
                 <IconText
                   iconName={"ph:plus-fill"}
                   displayText={"Create Playlist"}
+                  onPress={() => {
+                    setCreatePlaylistModalOpen(true);
+                  }}
                 />
               </div>
               <div className="m-1 cursor-pointer">
