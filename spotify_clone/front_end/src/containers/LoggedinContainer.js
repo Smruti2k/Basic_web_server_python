@@ -7,10 +7,13 @@ import { Howl, Howler } from "howler";
 import { Icon } from "@iconify/react";
 import songContext from "../contexts/songContext";
 import CreateModalPlaylist from "../modals/createPlaylistFile";
+import AddToPlaylistModal from "../modals/addToPlaylistModal";
+import { makeAuthenticatedPOSTRequest } from "../utils/serverHelper";
 
 const LoggedInContainer = ({ children, curActiveScreen }) => {
   const Navigate = useNavigate();
   const [createPlaylistModalOpen, setCreatePlaylistModalOpen] = useState(false);
+  const [addToPlayListModalOpen, setAddToPlaylistOpen] = useState(false);
 
   const {
     currentSong,
@@ -37,6 +40,19 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
     changeSong(currentSong.track);
   }, [currentSong && currentSong.track]);
   // console.log(currentSong);
+
+  const addSongToPlaylist = async (playlistId) => {
+    const songId = currentSong._id;
+
+    const payload = {playlistId, songId};
+    // console.log(payload);
+    const response  = await makeAuthenticatedPOSTRequest("/playlist/add/song", payload);
+    if(response._id)
+    {
+      setAddToPlaylistOpen(false);
+      alert("sucess");
+    }
+  };
 
   const playSound = () => {
     if (!soundPlayed) {
@@ -72,11 +88,21 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
 
   return (
     <div className="h-full w-full bg-app-black">
+      {/* modal to create a new playlist */}
       {createPlaylistModalOpen && (
         <CreateModalPlaylist
           closeModal={() => {
             setCreatePlaylistModalOpen(false);
           }}
+        />
+      )}
+      {/* //add a song to playlist modal */}
+      {addToPlayListModalOpen && (
+        <AddToPlaylistModal
+          closeModal={() => {
+            setAddToPlaylistOpen(false);
+          }}
+          addSongToParticularPlaylist={addSongToPlaylist}
         />
       )}
       <div className={`${currentSong ? "h-9/10" : "h-full"} w-full flex`}>
@@ -109,6 +135,7 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
                   iconName={"fluent:library-28-filled"}
                   displayText={"Your Library"}
                   active={curActiveScreen === "library"}
+                  targetLink={"/library"}
                 />
               </div>
               <div className="m-1 cursor-pointer">
@@ -162,7 +189,7 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
                 <TextWithHover displayText={"Premium"} />
                 <TextWithHover displayText={"Support"} />
                 <TextWithHover displayText={"Download"} />
-                {/* this the command for giving it the broeder in spotify */}
+                {/* this the command for giving it the border in spotify */}
                 <div className="h-1/2 border-r border-white"></div>
               </div>
               <div className="flex w-1/3 justify-around h-full items-center">
@@ -230,7 +257,22 @@ const LoggedInContainer = ({ children, curActiveScreen }) => {
             </div>
             <div>{/* //play bar */}</div>
           </div>
-          <div className="w-1/4 flex justify-end">Hello</div>
+          {/* this is the like and add to playlist button */}
+          <div className="w-1/4 flex justify-end pr-4 space-x-4 items-center">
+            <Icon
+              icon="material-symbols:playlist-add-rounded"
+              fontSize={30}
+              className="cursor-pointer text-gray-500 mt-1 hover:text-white"
+              onClick={() => {
+                setAddToPlaylistOpen(true);
+            }}
+            />
+            <Icon
+              icon="icon-park-outline:like"
+              fontSize={25}
+              className="cursor-pointer text-gray-500 hover:text-white"
+            />
+          </div>
         </div>
       )}
     </div>

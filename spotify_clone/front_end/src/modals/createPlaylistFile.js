@@ -1,5 +1,24 @@
+import { useState } from "react";
 import TextInput from "../componenets/shared/textInput";
+import { makeAuthenticatedPOSTRequest } from "../utils/serverHelper";
+
 const CreateModalPlaylist = ({ closeModal }) => {
+  const [playlistName, setPlaylistName] = useState("");
+  const [playListThumbnail, setPlayListThumbnail] = useState("");
+
+
+  const createPlaylist = async () => {
+    const response = await makeAuthenticatedPOSTRequest("/playlist/create", {
+      name: playlistName,
+      thumbnail: playListThumbnail,
+      songs: [],
+    });
+    if(response.data._id)
+    {
+      closeModal(); 
+    }
+  };
+
   return (
     <div
       className="absolute w-screen h-screen bg-black bg-opacity-50 flex justify-center items-center"
@@ -19,17 +38,20 @@ const CreateModalPlaylist = ({ closeModal }) => {
             label="Name"
             labelClassName={"text-white"}
             placeHolder={"PlaylistName"}
-            //value={name}
-            //setValue={setName}
+            value={playlistName}
+            setValue={setPlaylistName}
           />
           <TextInput
             label="thumbnail"
             labelClassName={"text-white"}
             placeHolder={"Thumbnail"}
-            //value={name}
-            //setValue={setName}
+            value={playListThumbnail}
+            setValue={setPlayListThumbnail}
           />
-          <div className="bg-white w-1/3 py-3 rounded flex justify-center items-center font-semibold mt-10 cursor-pointer hover:bg-gray-500">
+          <div
+            className="bg-white w-1/3 py-3 rounded flex justify-center items-center font-semibold mt-10 cursor-pointer hover:bg-gray-500"
+            onClick={createPlaylist}
+          >
             Create
           </div>
         </div>
